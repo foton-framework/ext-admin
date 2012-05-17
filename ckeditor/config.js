@@ -34,8 +34,9 @@ CKEDITOR.on('instanceReady', function(e)
 		
 		html = html.replace(/<[\/]?span[^>]*>/ig, '');
 		html = html.replace(/[\s]*(class|style)=(["']?)[^>\2]+\2?/ig, '');
-		html = html.replace(/<p>(<br[ \/]*>)?<\/p>/ig, '');
-		html = html.replace(/<p><b>([^<]+)<\/b>[:.;]?(.?)<\/p>/ig, '<'+h_tag+'>$1$2</'+h_tag+'>');
+		html = html.replace(/<p>[\s]*(<br[ \/]*>)?[\s]*<\/p>/ig, '');
+		html = html.replace(/<p>[\s]*<b>([^<]+)<\/b>[\s]*[:.;]?(.?)[\s]*<\/p>/ig, '<'+h_tag+'>$1$2</'+h_tag+'>');
+		console.log(html);
 		
 		editor.insertHtml(html);
 
