@@ -1,7 +1,15 @@
-﻿if (typeof CKCONFIG == 'undefined')
+﻿// CKCONFIG keys:
+// default_header_tag
+// ui_color
+// content_css
+// editor_height
+
+function ck_config(key, def)
 {
-	var CKCONFIG = {};
+	if (typeof CKCONFIG == 'undefined' || typeof CKCONFIG[key] == 'undefined') return def;
+	return CKCONFIG[key];
 }
+
 
 CKEDITOR.on('instanceReady', function(e)
 {
@@ -15,20 +23,19 @@ CKEDITOR.on('instanceReady', function(e)
 	};
 	var tags = 'p,div,pre,ul,ol,li,h1,h2,h3,h4,h5,h6'.split(',');
 	for (var i=0; i<tags.length; i++) writer.setRules(tags[i], opt);
-
-	CKCONFIG.default_header_tag = CKCONFIG.default_header_tag || 'h2';
-
+	
 	// My cleaner
 	e.editor.on('paste', function(e) {
 		var editor = e.editor;
 		var html   = e.data.html;
-
+		var h_tag  = ck_config('default_header_tag', 'h2');
+		
 		e.stop();
 		
 		html = html.replace(/<[\/]?span[^>]*>/ig, '');
 		html = html.replace(/[\s]*(class|style)=(["']?)[^>\2]+\2?/ig, '');
 		html = html.replace(/<p>(<br[ \/]*>)?<\/p>/ig, '');
-		html = html.replace(/<p><b>([^<]+)<\/b>[:.;]?(.?)<\/p>/ig, '<'+CKCONFIG.default_header_tag+'>$1$2</'+CKCONFIG.default_header_tag+'>');
+		html = html.replace(/<p><b>([^<]+)<\/b>[:.;]?(.?)<\/p>/ig, '<'+h_tag+'>$1$2</'+h_tag+'>');
 		
 		editor.insertHtml(html);
 
@@ -47,7 +54,7 @@ CKEDITOR.editorConfig = function(config)
 
 	// Define changes to default configuration here. For example:
 	config.language = 'ru';
-	config.uiColor  = CKCONFIG.ui_color || '#CCC';
+	config.uiColor = ck_config('ui_color', '#CCC');
 	config.dialog_backgroundCoverColor = '#000';	
 
 	config.enterMode = CKEDITOR.ENTER_P;
@@ -62,8 +69,8 @@ CKEDITOR.editorConfig = function(config)
 	config.startupOutlineBlocks = true;
 	
 	config.filebrowserUploadUrl = '/admin/uploader';
-	config.contentsCss = CKCONFIG.content_css || '/res/css/global.css';
-	config.height      = CKCONFIG.editor_height || 350;
+	config.contentsCss = ck_config('content_css', '/res/css/global.css');
+	config.height      = ck_config('editor_height', 350);
 	
 	config.keystrokes = [
 	   [ CKEDITOR.ALT + 192 /*`*/, 'foton-p' ],
