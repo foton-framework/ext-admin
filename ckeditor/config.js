@@ -14,6 +14,33 @@ function ck_config(key, def)
 	return CKCONFIG[key];
 }
 
+function ck_remove_format(html)
+{
+	var h_tag  = ck_config('default_header_tag', 'h2');
+
+	// Remove all span
+	html = html.replace(/<[\/]?span[^>]*>/ig, '');
+
+	// Remove all style and tags attr
+	html = html.replace(/[\s]*(class|style)=(["']?)[^>\2]+\2?/ig, '');
+
+	// Remove empty tags
+	html = html.replace(/<p>[\s]*(<([^>]+)>[\s]*<\/\2>)?(<br[ \/]*>)?[\s]*<\/p>/ig, '');
+
+	// Remove &nbsp; after tag
+	html = html.replace(/(<[^>]+>)&nbsp;/ig, '$1');
+
+	// Remove &nbsp; befor tag
+	html = html.replace(/&nbsp;(<\/[^>]+>)/ig, '$1');
+
+	// Replace <p><b|strong>HEADER</b|strong></p> TO: <h*>HEADER</h*>
+	html = html.replace(/<p>[\s]*<(b|strong)>([^<]+)<\/\1>[\s]*[:.;]?(.?)[\s]*<\/p>/ig, '<'+h_tag+'>$2$3</'+h_tag+'>');
+
+	// Replace <p><b|strong>HEADER</b|strong><br> TO: <h*>HEADER</h*><p>
+	html = html.replace(/<p><(b|strong)>([^<]+)<\/\1>[\s]*[:.;]?<br[ \/]{0,2}>/ig, '<'+h_tag+'>$2</'+h_tag+'><p>');
+
+	return html;
+}
 
 CKEDITOR.on('instanceReady', function(e)
 {
@@ -30,25 +57,8 @@ CKEDITOR.on('instanceReady', function(e)
 	
 	// My cleaner
 	e.editor.on('paste', function(e) {
-		var editor = e.editor;
-		var html   = e.data.html;
-		var h_tag  = ck_config('default_header_tag', 'h2');
-		
 		e.stop();
-		
-		html = html.replace(/<[\/]?span[^>]*>/ig, '');
-		html = html.replace(/[\s]*(class|style)=(["']?)[^>\2]+\2?/ig, '');
-		html = html.replace(/<p>[\s]*(<([^>]+)>[\s]*<\/\2>)?(<br[ \/]*>)?[\s]*<\/p>/ig, '');
-		html = html.replace(/<p>[\s]*<b>([^<]+)<\/b>[\s]*[:.;]?(.?)[\s]*<\/p>/ig, '<'+h_tag+'>$1$2</'+h_tag+'>');
-		// console.log(html);
-		
-		editor.insertHtml(html);
-
-		// SELECT ALL & remove format
-		// var range = new CKEDITOR.dom.range( editor.document );
-		// range.selectNodeContents( editor.document.getBody() );
-		// range.select();
-		// editor.execCommand('removeFormat', editor.selection);
+		e.editor.insertHtml(ck_remove_format( e.data.html ));
 	});
 });
 
@@ -98,7 +108,7 @@ CKEDITOR.editorConfig = function(config)
 
 		'/',
 		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-		{ name: 'foton',      items : [ 'foton-p', 'foton-h1', 'foton-h2', 'foton-h3', 'foton-h4', 'foton-h5'/*, '-', 'foton-wand'*/] },
+		{ name: 'foton',      items : [ 'foton-p', 'foton-h1', 'foton-h2', 'foton-h3', 'foton-h4', 'foton-h5', '-', 'foton-wand'] },
 		// { name: 'styles',      items : [ 'Format','FontSize' ] },
 		// { name: 'colors',      items : [ 'TextColor','BGColor' ] },
 		{ name: 'links',       items : [ 'Link','Unlink','Anchor']}

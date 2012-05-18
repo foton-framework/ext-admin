@@ -1,7 +1,23 @@
-CKEDITOR.plugins.add( 'foton',
+CKEDITOR.plugins.add('foton',
 {
-	init: function( editor )
+	init: function(editor)
 	{
+		editor.addCommand('foton-wand', {
+			exec: function(editor) {
+				editor.setData(ck_remove_format(editor.getData()));
+				// SELECT ALL & remove format
+				// var range = new CKEDITOR.dom.range( editor.document );
+				// range.selectNodeContents( editor.document.getBody() );
+				// range.select();
+				// editor.execCommand('removeFormat', editor.selection);
+			}
+		});
+		editor.ui.addButton('foton-wand', {
+			label:'Чистка текст',
+			command:'foton-wand', 
+			icon:this.path + 'images/wand.png'
+		});
+
 		editor.addCommand('foton-p', {exec: function(editor) {(new CKEDITOR.style({element: 'p'})).apply(editor.document)}});
 		editor.addCommand('foton-h1', {exec: function(editor) {(new CKEDITOR.style({element: 'h1'})).apply(editor.document)}});
 		editor.addCommand('foton-h2', {exec: function(editor) {(new CKEDITOR.style({element: 'h2'})).apply(editor.document)}});
