@@ -32,6 +32,7 @@
 <td id="menu_column">
 	<ul>
 		<? foreach ($this->admin->backend_menu_priority as $key=>$item): ?>
+			<? if (empty($item['title'])) continue; ?>
 			<li<?=FF_DEVMODE ? " title='{$item['priority']}'" : '' ?><?=$this->a_component == $key?' class="selected"':NULL ?>><a href="/admin/<?=$key ?>"><img src="<?=$item['icon'] ?>" alt="" /><?=$item['title'] ?></a></li>
 		<? endforeach ?>
 	</ul>
