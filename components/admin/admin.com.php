@@ -108,6 +108,12 @@ class EXT_COM_Admin extends SYS_Component
 		
 		$model = new $request->model;
 		
+		// Устанавливаем параметры запроса в модели
+		foreach ($request as $key => $value)
+		{
+			$model->act_params[$key] = $value;
+		}
+
 		switch ($action)
 		{
 			case 'enable':
@@ -126,6 +132,8 @@ class EXT_COM_Admin extends SYS_Component
 				$this->db->where($model->table() . '.id = ?', $request->id);
 				$this->view = 'act_edit';
 				$row_data = $model->get_row(NULL, FALSE);
+				
+				$model->row_data =& $row_data;
 
 				$model->init_form();
 				//stripslashes
