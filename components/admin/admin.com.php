@@ -13,6 +13,7 @@ class EXT_COM_Admin extends SYS_Component
 			sys::error_404();
 		}
 		$this->admin->is_admin_mode = TRUE;
+		$this->template->column = $this->template->columns = NULL;
 		$this->load->library('Form');
 		$this->form->template = array(
 			'error_prefix'       => '<div class="error">',
