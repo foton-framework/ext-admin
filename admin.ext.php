@@ -6,11 +6,13 @@ class EXT_Admin
 {
 	//--------------------------------------------------------------------------
 	
-	public $enable          = FALSE;
-	public $is_backend      = FALSE;
-	public $is_admin_mode   = FALSE;
-	public $admin_component = 'admin';
-	public $backend_menu = array();
+	public $enable           = FALSE;
+	public $enable_log       = FALSE;
+	public $log_class        = 'ext.log';
+	public $is_backend       = FALSE;
+	public $is_admin_mode    = FALSE;
+	public $admin_component  = 'admin';
+	public $backend_menu     = array();
 	public $backend_sub_menu = array();
 	public $template = array(
 		'admin_buttons_prefix' => '<span class="admin_buttons">',
@@ -23,7 +25,7 @@ class EXT_Admin
 	//--------------------------------------------------------------------------
 	
 	public $panel_actions = array();
-	
+
 	//--------------------------------------------------------------------------
 	
 	public function __construct()
@@ -38,15 +40,45 @@ class EXT_Admin
 				<script type="text/javascript" src="/' . EXT_FOLDER . '/admin/ckeditor/ckeditor.js"></script>
 			');
 		}
+
+		sys::set_config_items($this, 'ext_admin');
 	}
 	
 	//--------------------------------------------------------------------------
 	
+	/**
+	 * Логгирует действия администратора. Создание, удаление и изменение статуса
+	 * @param  string  $call_str Строка вызова модели (model.news или ext.sub)
+	 * @param  integer $pid      ID объекта
+	 * @param  integer $status   Изменение статуса объекта. 0: откл; 1: вкл; -1: удален
+	 * @param  integer $uid      ID пользователя (админа)
+	 * @return void
+	 */
+	public function log($call_str, $pid, $status = 1, $uid = 0)
+	{
+		static $log = NULL;
+
+		if ( ! $this->enable_log) return;
+
+		if ($log === NULL)
+		{
+			$log =& sys::call($this->log_class);
+		}
+
+		$log->log($call_str, $pid, $status, $uid);
+	}
+
+	//--------------------------------------------------------------------------
+
 	public function row_actions(&$model, &$row)
 	{
 		if ( ! $this->enable) return;
 		
-		$row_url = 'model:' . get_class($model) . '/id:' . $row->id;
+		$model_class = strtolower(get_class($model));
+		$model_class = preg_replace("@^".EXTENSION_CLASS_PREFIX."@sui", 'ext.', $model_class);
+		$model_class = preg_replace("@^".MODEL_CLASS_PREFIX."@sui", 'model.', $model_class);
+
+		$row_url = 'model:' . $model_class . '/id:' . $row->id;
 		
 		$html = "<div id='a_row_{$row->id}'></div>";
 		
@@ -69,11 +101,13 @@ class EXT_Admin
 	{
 		if ( ! $this->enable) return;
 		//if (empty($model->add_action) && empty($model->edit_action)) return;
-		
-		$model_class = get_class($model);
-		$model_class_name = str_replace(MODEL_CLASS_PREFIX, '', $model_class);
+
+		$model_class = strtolower(get_class($model));
+		$model_class = preg_replace("@^".EXTENSION_CLASS_PREFIX."@sui", 'ext.', $model_class);
+		$model_class = preg_replace("@^".MODEL_CLASS_PREFIX."@sui", 'model.', $model_class);
+
 		$url = 'model:' . $model_class;
-		
+
 		/*
 $this->panel_actions[get_class($model)] = array(
 			'name'  => empty($model->name) ? $model_class_name : $model->name,
@@ -110,8 +144,10 @@ $this->panel_actions[get_class($model)] = array(
 	function admin_panel()
 	{
 		if ( ! $this->enable) return;
-		$result = '';
 		
+		$result = '';
+		// echo '<pre>';
+		// print_r($this->panel_actions);exit;
 		foreach ($this->panel_actions as $action)
 		{
 			$act_link = '';

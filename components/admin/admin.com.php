@@ -107,7 +107,8 @@ class EXT_COM_Admin extends SYS_Component
 			$request->$key = $val;
 		}
 		
-		$model = new $request->model;
+		$model = sys::call($request->model);
+		// $model = new ;
 		
 		// Устанавливаем параметры запроса в модели
 		foreach ($request as $key => $value)
@@ -119,14 +120,21 @@ class EXT_COM_Admin extends SYS_Component
 		{
 			case 'enable':
 			case 'disable':
+				$status = ($action == 'enable');
 				$this->db->where($model->table() . '.id = ?', $request->id);
-				$model->update($model->table(), array('status' => ($action == 'enable') ));
+				$model->update($model->table(), array('status' => $status));
 				$redirect = $referer . '#a_row_' . $request->id;
+				
+				// Data log
+				$this->admin->log($request->model, $request->id, $status);
 				break;
 			
 			case 'remove':
 				$model->delete($model->table(), array('id=?' => $request->id));
 				$redirect = $referer;
+
+				// Data log
+				$this->admin->log($request->model, $request->id, -1);
 				break;
 			
 			case 'edit':
@@ -146,10 +154,16 @@ class EXT_COM_Admin extends SYS_Component
 				if ($this->form->validation())
 				{
 					$this->db->where($model->table() . '.id = ?', $request->id);
-					$model->update();
+					$affected_rows = $model->update();
 					
 					$this->data['message'] = 'Данные изменены';
 					
+					// Data log
+					if ($affected_rows && isset($_POST['status']))
+					{
+						$this->admin->log($request->model, $request->id, $_POST['status']);
+					}
+
 					if ( ! empty($_POST['save_back']))
 					{											
 						ob_get_level() && ob_clean();
@@ -172,7 +186,10 @@ class EXT_COM_Admin extends SYS_Component
 					foreach ($request as $key => $val) if ( ! isset($_POST[$key])) $_POST[$key] = $val;
 					//if ( ! empty($request->sub_id)) $_POST['sub_id'] = $request->sub_id;
 					
-					$model->insert();
+					$insert_id = $model->insert();
+
+					// Data log
+					$this->admin->log($request->model, $insert_id);
 
 					if ($model->db->affected_rows()) header('Location: ' . $this->form->value('back_link'));
 				}
