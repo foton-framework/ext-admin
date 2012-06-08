@@ -130,6 +130,7 @@ class EXT_COM_Admin extends SYS_Component
 				break;
 			
 			case 'remove':
+				$this->db->limit(1);
 				$model->delete($model->table(), array('id=?' => $request->id));
 				$redirect = $referer;
 
@@ -191,7 +192,7 @@ class EXT_COM_Admin extends SYS_Component
 					// Data log
 					$this->admin->log($request->model, $insert_id);
 
-					if ($model->db->affected_rows()) header('Location: ' . $this->form->value('back_link'));
+					if ($insert_id) header('Location: ' . $this->form->value('back_link'));
 				}
 				break;
 				
