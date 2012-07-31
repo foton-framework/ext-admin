@@ -30,7 +30,9 @@ class EXT_Admin
 	
 	public function __construct()
 	{
-		if (sys::$ext->user->group_id == 1 && sys::$ext->user->permission->check_url('admin'))
+		$user = empty(sys::$ext->user) ? sys::$lib->user : sys::$ext->user;
+
+		if ($user->group_id == 1 && $user->permission->check_url('admin'))
 		{
 			$this->enable = TRUE;
 			
