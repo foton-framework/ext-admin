@@ -66,6 +66,16 @@
 	padding:4px 10px;
 	float: left;
 }
+.inline_admin_buttons .admin_buttons {
+	position:inherit;
+	border:none !important;
+	background:none !important;
+	box-shadow:none !important;
+	margin:0 !important;
+	left:0;
+	top:0;
+}
+.inline_admin_buttons .admin_buttons,
 .admin_buttons:hover {
 	height:24px;
 	padding:2px 1px;
@@ -74,6 +84,10 @@
 	overflow:visible;
 	width:auto;
 }
+.inline_admin_buttons .admin_buttons .a_act_button {
+	margin:0 2px 0 0 !important
+}
+.inline_admin_buttons .admin_buttons .a_act_button,
 .admin_buttons:hover .a_act_button {
 	border-width:1px;
 }
@@ -99,7 +113,7 @@
 	text-decoration:none;
 	background-repeat:no-repeat;
 	background-position:50% 50% !important;
-	background-color:#FFF;
+	background-color:#FFF !important;
 	border:1px solid #DDD;
 	border-width:0;
 	border-radius:3px;
