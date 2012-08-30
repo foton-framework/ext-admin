@@ -32,6 +32,9 @@ function ck_remove_format(html)
 	// Remove &nbsp; befor tag
 	html = html.replace(/&nbsp;(<\/[^>]+>)/ig, '$1');
 
+	// Clear list
+	html = html.replace(/<\/([ou])l>[\s\n]*<\1l>/ig, '');
+
 	// Replace <p><b|strong>HEADER</b|strong></p> TO: <h*>HEADER</h*>
 	html = html.replace(/<p>[\s]*<(b|strong)>([^<]+)<\/\1>[\s]*[:.;]?(.?)[\s]*<\/p>/ig, '<'+h_tag+'>$2$3</'+h_tag+'>');
 

@@ -192,7 +192,18 @@ class EXT_COM_Admin extends SYS_Component
 					// Data log
 					$this->admin->log($request->model, $insert_id);
 
-					if ($insert_id) header('Location: ' . $this->form->value('back_link'));
+					if ($insert_id)
+					{
+						$this->db->where($model->table.'.id=?', $insert_id);
+						$new_data = $model->get_row();
+
+						if ($new_data && ! empty($new_data->full_link))
+						{
+							hlp::redirect($new_data->full_link);
+						}
+
+						header('Location: ' . $this->form->value('back_link'));
+					}
 				}
 				break;
 				
