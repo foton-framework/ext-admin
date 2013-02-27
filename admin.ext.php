@@ -5,7 +5,7 @@
 class EXT_Admin
 {
 	//--------------------------------------------------------------------------
-	
+
 	public $enable           = FALSE;
 	public $enable_log       = FALSE;
 	public $log_class        = 'ext.log';
@@ -15,19 +15,21 @@ class EXT_Admin
 	public $backend_menu     = array();
 	public $backend_sub_menu = array();
 	public $template = array(
+		// 'admin_buttons_prefix' => '<span class="ff-admin-buttons">',
 		'admin_buttons_prefix' => '<span class="admin_buttons">',
 		'admin_buttons_suffix' => '</span>',
-		
-		'admin_panel_prefix' => '<span class="admin_panel">',
-		'admin_panel_suffix' => '</span>',
+
+		// 'admin_panel_prefix' => '<div id="ff-admin-panel">',
+		'admin_panel_prefix' => '<div class="admin_panel">',
+		'admin_panel_suffix' => '</div>',
 	);
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	public $panel_actions = array();
 
 	//--------------------------------------------------------------------------
-	
+
 	public function __construct()
 	{
 		$user = empty(sys::$ext->user) ? sys::$lib->user : sys::$ext->user;
@@ -35,7 +37,7 @@ class EXT_Admin
 		if ($user->group_id == 1 && $user->permission->check_url('admin'))
 		{
 			$this->enable = TRUE;
-			
+
 			sys::$lib->template->add_head_content('
 				<link rel="stylesheet" type="text/css" href="/' . EXT_FOLDER . '/admin/css/admin_front.css" />
 				<script type="text/javascript" src="/' . EXT_FOLDER . '/admin/js/admin_front.js"></script>
@@ -45,9 +47,9 @@ class EXT_Admin
 
 		sys::set_config_items($this, 'ext_admin');
 	}
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	/**
 	 * Логгирует действия администратора. Создание, удаление и изменение статуса
 	 * @param  string  $call_str Строка вызова модели (model.news или ext.sub)
@@ -75,30 +77,30 @@ class EXT_Admin
 	public function row_actions(&$model, &$row)
 	{
 		if ( ! $this->enable) return;
-		
+
 		$model_class = strtolower(get_class($model));
 		$model_class = preg_replace("@^".EXTENSION_CLASS_PREFIX."@sui", 'ext.', $model_class);
 		$model_class = preg_replace("@^".MODEL_CLASS_PREFIX."@sui", 'model.', $model_class);
 
 		$row_url = 'model:' . $model_class . '/id:' . $row->id;
-		
+
 		$html = "<div id='a_row_{$row->id}'></div>";
-		
+
 		if (isset($row->status))
 		{
 			$act    = $row->status ? 'disable' : 'enable';
 			$title  = $row->status ? 'Выключить' : 'Включить';
 			$html .= "<a href='/{$this->admin_component}/act/{$act}/$row_url/' title='{$title}' class='a_act_button a_{$act}'><span>{$title}</span></a>";
 		}
-		
+
 		$html .= "<a href='/{$this->admin_component}/act/edit/$row_url/' title='Редактировать' class='a_act_button a_edit'><span>Редактировать</span></a>";
 		$html .= "<a href='/{$this->admin_component}/act/remove/$row_url/' onclick='return a_del_confirm()' title='Удалить' class='a_act_button a_remove'><span>Удалить</span></a>";
-		
+
 		return $this->_tpl('admin_buttons', $html);
 	}
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	public function set_actions(&$model)
 	{
 		if ( ! $this->enable) return;
@@ -117,10 +119,10 @@ $this->panel_actions[get_class($model)] = array(
 			'list_link'  => "/{$this->admin_component}/list/add/$url",
 		);
 */
-		
+
 		if ( ! empty($model->name)) $this->panel_actions[get_class($model)]['name'] = $model->name;
 		if ( ! empty($model->act_params)) $this->panel_actions[get_class($model)]['act_params'] = $model->act_params;
-		
+
 		if ( ! empty($model->add_action))
 		{
 			$this->panel_actions[get_class($model)][] = array(
@@ -129,7 +131,7 @@ $this->panel_actions[get_class($model)] = array(
 				'type'  => 'add'
 			);
 		}
-		
+
 		if ( ! empty($model->edit_action))
 		{
 			$url .= '/id:' . $model->get_id();
@@ -140,13 +142,13 @@ $this->panel_actions[get_class($model)] = array(
 			);
 		}
 	}
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	function admin_panel()
 	{
 		if ( ! $this->enable) return;
-		
+
 		$result = '';
 		// echo '<pre>';
 		// print_r($this->panel_actions);exit;
@@ -157,13 +159,13 @@ $this->panel_actions[get_class($model)] = array(
 			{
 				foreach ($action['act_params'] as $key => $val) $act_link .= "/{$key}:{$val}";
 			}
-			
+
 			$result .= "<tr><div class='admin_panel_row'>";
-			
+
 			$result .= '<td>';
 			if ( ! empty($action['name'])) $result .= "<span class='name'>{$action['name']}</span>";
 			$result .= '</td>';
-			
+
 			foreach ($action as $i => $subact)
 			{
 				if ( ! is_numeric($i)) continue;
@@ -173,21 +175,21 @@ $this->panel_actions[get_class($model)] = array(
 //			$result .= "<a href='{$action['link']}' title='Все записи' class='a_act_button a_list'><span>Все записи</span></a>";
 			$result .= '</div></tr>';
 		}
-		return $this->_tpl('admin_panel', "<table>{$result}</table>") . '<a href="/admin/" class="admin_to_backend"></a>';
+		return $this->_tpl('admin_panel', '<a href="/admin/" class="admin_to_backend"></a>' . "<table>{$result}</table>");
 	}
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	public function add_main_menu_item($menu_item)
 	{
 		$priority = isset($menu_item['priority']) ? $menu_item['priority'] : NULL;
-		
+
 		$this->backend_menu[$menu_item['key']] = $menu_item;
 		//$this->backend_menu_priority[$priority][$menu_item['key']] =& $this->backend_menu[$menu_item['key']];
 	}
-	
+
 	//--------------------------------------------------------------------------
-	
+
 	private function _tpl($tpl, $content = '')
 	{
 		if ($content)
@@ -195,6 +197,6 @@ $this->panel_actions[get_class($model)] = array(
 			return $this->template[$tpl . '_prefix'] . $content . $this->template[$tpl . '_suffix'];
 		}
 	}
-	
+
 	//--------------------------------------------------------------------------
 }

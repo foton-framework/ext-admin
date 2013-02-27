@@ -1,0 +1,276 @@
+//--------------------------------------------------------------------------
+
+@import "compass/css3";
+
+//--------------------------------------------------------------------------
+
+$panel-height: 40px;
+$panel-margin: 20px;
+$panel-bg:     #222;
+
+//--------------------------------------------------------------------------
+
+body {
+	// padding-top: $panel-height + $panel-margin !important;
+}
+
+//--------------------------------------------------------------------------
+// Admin panel
+//--------------------------------------------------------------------------
+
+#ff-admin-panel {
+	background: $panel-bg;
+	height:     $panel-height;
+	position:   fixed;
+	top:        0;
+	left:       0;
+	width:      100%;
+	z-index:    9999;
+	border-bottom: 1px solid darken($panel-bg, 30%);
+	@include background(linear-gradient(lighten($panel-bg, 20%), $panel-bg));
+	@include box-shadow(0 3px 10px rgba(0,0,0,.3), 0 1px 3px darken($panel-bg, 30%) inset);
+}
+
+/* @group .admin_buttons */
+.admin_buttons {
+	display:inline-block;
+	background: #FFF;
+	border:2px solid #C00 !important;
+	height:14px;
+	width:14px;
+	margin:-5px 0 0 -22px;
+	overflow:hidden;
+	position:absolute;
+	opacity:.7;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	box-shadow:0 0 5px rgba(0,0,0,.5);
+	-moz-box-shadow:0 1px 5px rgba(0,0,0,.5);
+	-webkit-box-shadow:0 0 5px rgba(0,0,0,.5);
+}
+.admin_panel_row {overflow:auto;}
+.admin_buttons .a_disable, .admin_buttons .a_enable{
+	margin:-4px 0 0 -3px;
+	background-color:transparent;
+}
+.admin_buttons:hover .a_disable, .admin_buttons:hover .a_enable {
+	margin:0;
+}
+.admin_panel {
+	display: block;
+	padding:2px 1px 0;
+	left: 50px;
+	top: 10px;
+	opacity:1;
+	z-index:1000;
+	overflow:hidden;
+	border:2px solid #C00 !important;
+	width: 24px;
+	min-height:24px;
+	position: fixed;
+	background:#FFF url(../ico/wand.png) no-repeat 6px 50% !important;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	box-shadow:0 0 5px rgba(0,0,0,.5);
+	-moz-box-shadow:0 1px 5px rgba(0,0,0,.5);
+	-webkit-box-shadow:0 0 5px rgba(0,0,0,.5);
+}
+.admin_panel:hover {
+	overflow:visible;
+	width: auto;
+	background: #FFF !important;
+}
+.admin_panel:hover .a_act_button, .admin_panel:hover .name {
+	display: block;
+}
+.admin_panel .a_act_button{
+	margin:0 1px 2px;
+	display: none;
+	width: auto;
+	border-width:1px;
+	background-position: 3px 50% !important;
+	padding-left: 25px !important;
+	padding-right: 5px !important;
+}
+.admin_panel .name {
+	display: none;
+	padding:4px 10px;
+	float: left;
+}
+.inline_admin_buttons .admin_buttons {
+	position:inherit;
+	border:none !important;
+	background:none !important;
+	box-shadow:none !important;
+	margin:0 !important;
+	left:0;
+	top:0;
+}
+.inline_admin_buttons .admin_buttons,
+.admin_buttons:hover {
+	height:24px;
+	padding:2px 1px;
+	opacity:1;
+	z-index:1000;
+	overflow:visible;
+	width:auto;
+}
+.inline_admin_buttons .admin_buttons .a_act_button {
+	margin:0 2px 0 0 !important
+}
+.inline_admin_buttons .admin_buttons .a_act_button,
+.admin_buttons:hover .a_act_button {
+	border-width:1px;
+}
+.a_act_button span {
+	display: block;
+	line-height: 22px !important;
+	height: 22px !important;
+	white-space: nowrap;
+	color:#333;
+	font:normal 12px "Trebuchet MS";
+}
+.admin_buttons .a_act_button span {
+	display:none;
+}
+.a_act_button {
+	padding: 0 !important;
+	display:block;
+	float:left;
+	width:22px;
+	line-height: 22px !important;
+	height: 22px !important;
+	margin:0 1px;
+	text-decoration:none;
+	background-repeat:no-repeat;
+	background-position:50% 50% !important;
+	background-color:#FFF !important;
+	border:1px solid #DDD;
+	border-width:0;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+}
+.a_act_button:hover {
+	border-color:#9CF !important;
+	background-color:#DEF !important;
+}
+.a_act_button.a_add {background-image:url(../ico/plus.png)}
+.a_act_button.a_list {background-image:url(../ico/table__pencil.png)}
+.a_act_button.a_edit {background-image:url(../ico/pencil.png)}
+.a_act_button.a_remove {background-image:url(../ico/cross-script.png)}
+.a_act_button.a_enable {background-image:url(../ico/status-busy.png)}
+.a_act_button.a_disable {background-image:url(../ico/status.png)}
+/* @end */
+
+
+
+/* @group .admin_form */
+.admin_form {
+	font:normal 13px "Trebuchet MS" !important;
+	color:#555 !important;
+	background:#EEE;
+	border:1px solid #CCC !important;
+	padding:10px;
+	margin:5px;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+.admin_form input, .admin_form textarea {
+	border:1px solid #CCC;
+	width:100%;
+	padding:3px;
+	font:normal 12px "Trebuchet MS" !important;
+}
+.admin_form textarea {
+	height:150px;
+}
+.admin_form table {
+	width:100%;
+}
+.error, .message {
+	color: #a10104;
+	background: #FDD;
+	border: 1px solid #D55;
+	padding: 10px;
+	margin:10px 0;
+	font-size: 12px;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	text-shadow: none;
+}
+.error hr {
+	border-top: 1px dotted #D55;
+	background: none;
+	height: 0;
+	margin: 5px 0;
+}
+.message {
+	background:#DFD;
+	border-color:#5D5;
+	color: #090;
+}
+.admin_form .message {
+	background:#CFC;
+	border:2px solid #9F9;
+	color:#070;
+	padding:5px;
+	margin:5px 0;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+.admin_form a {
+	color:#09F !important;
+}
+
+.admin_form hr {
+	border:none;
+	border-top:1px dotted #CCC;
+	background: none;
+	height: 0;
+	margin: 7px 0;
+}
+/* @end */
+
+.admin_to_backend {
+	position: fixed;
+	top:0;
+	left:10px;
+	width: 37px;
+	height: 65px;
+	background:url(../img/btn_to_backend.png) no-repeat 0 -1px;
+	z-index:9999;
+}
+
+.ad_debug_name {
+	position:absolute;
+	font:11px "Tahoma";
+	background:#FCC;
+	border:1px solid #C00;
+	color:#600;
+	line-height:12px;
+	padding:2px;
+	opacity:.9;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+}
+.ad_debug_name:hover {opacity:.1}
+
+
+
+
+.multicheckbox {height:200px; overflow:auto; border:1px solid #999; background:#FFF; box-shadow:0 1px 5px rgba(0,0,0,.3) inset; border-radius:3px }
+.multicheckbox label {display: block; border-bottom:1px dotted #CCC; padding:0 10px; font-size:12px}
+.multicheckbox input {margin-right:7px}
+.multicheckbox label:hover {background:#EEE}
+
+.admin_buttons div {
+	width:auto !important;
+	height:auto !important;
+}
